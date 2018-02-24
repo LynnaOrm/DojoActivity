@@ -1,0 +1,84 @@
+<br>
+<a href="/logout">Log Off</a>
+
+
+<h1>Dojo Activity Center</h1>
+
+<h3>Welcome @ViewBag.UserInfo.FirstName ! </h3>
+
+
+<table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <td>Activity</td>
+                <td>Date and Time</td>
+                <td>Duration</td>
+                <td>Event Coordinator</td>
+                <td>Number of Participants</td>
+                <td>Action</td>
+
+            </tr>
+        </thead>
+
+
+        @foreach(var a in @ViewBag.AllActivities){
+
+            <tr>
+                <td><a href="/activity/@a.ActivityId">@a.Title</a></td>
+                <td>@a.DateofEvent.ToString("dd MMM yyyy") & @a.TimeofEvent</td>
+                <td>@a.Duration</td>
+                <td> Display First Name/ creator!</td>
+                <td>@a.Participants.Count</td>
+
+                @if(a.UserId == ViewBag.UserInfo.id){
+                    <td>
+                        <form action="delete" method="POST">
+                            <input type="hidden" name="ActivityId" value="@a.ActivityId">
+                            <button class="btn-xs btn-danger" type="submit" name="delete">Delete</button>
+                        </form>
+                    </td>
+                }
+
+                @{
+                    bool goingToActivity = false;
+
+                    foreach(var connection in a.Participants){
+                        if(ViewBag.UserInfo.id == connection.UserId){
+                            
+                                goingToActivity = true;
+                        
+                        }
+                    }
+
+                    if(goingToActivity == true){
+                        <td>
+                            <form action="Leave" method="POST">
+                                <input type="hidden" name="ActivityId" value="@a.ActivityId">
+                                <button class="btn-xs btn-danger" type="submit" name="Leave">Leave</button>
+                            </form>
+                        </td>
+                    }
+                    else{
+                        <td>
+                            <form action="Join" method="POST">
+                                <input type="hidden" name="ActivityId" value="@a.ActivityId">
+                                <button class="btn-xs btn-success" type="submit" name="Join">Join</button>
+                            </form>
+                            
+                            
+                        </td>
+                    }
+                }
+
+            </tr>
+
+
+
+        }
+</table>
+
+
+
+
+
+<a class="pull-right btn btn-primary" href="/newActivity">Add New Activity</a>
